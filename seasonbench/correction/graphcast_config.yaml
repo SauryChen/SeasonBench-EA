@@ -1,0 +1,51 @@
+model_args:
+  model_name: "graphcast"
+  input_vars: {
+    "pressure_levels": [
+               't_1000','t_850','t_700','t_500','t_200',
+               'z_1000','z_850','z_700','z_500','z_200',
+               'u_1000','u_850','u_700','u_500','u_200',
+               'v_1000','v_850','v_700','v_500','v_200',
+               'q_1000','q_850','q_700','q_500','q_200'
+               ],
+    "single_level": [
+               't2m','msl','stl1','sst','siconc','sd','tprate',
+               ],
+  }
+  input_cons: ['lsm', 'slt', 'z']
+  output_vars: ['t2m','t_850','z_500','q_700','tp']
+  ##########
+  mesh_level: 6
+  processor_layers: 12
+  multimesh: True
+  hidden_layers: 1
+  hidden_dim: 512
+  #########
+  learning_rate: 1e-3
+  t_max: 500
+  patience: 20
+  max_epochs: 300
+  # gradient_clip_val: 1.0
+
+data_args:
+  data_dir: "/root/Weather_Data/flood_season_data"
+  center: "cmcc"
+  crop_size: [181, 360] # no crop for graphcast
+  batch_size: 1 # batch size is 1 for graphcast
+  num_workers: 0
+  input_vars: {
+    "pressure_levels": [
+               't_1000','t_850','t_700','t_500','t_200',
+               'z_1000','z_850','z_700','z_500','z_200',
+               'u_1000','u_850','u_700','u_500','u_200',
+               'v_1000','v_850','v_700','v_500','v_200',
+               'q_1000','q_850','q_700','q_500','q_200'
+               ],
+    "single_level": [
+               't2m','msl','stl1','sst','siconc','sd','tprate',
+               ],
+  }
+  input_cons: ['lsm', 'slt', 'z']
+  output_vars: ['t2m','t_850','z_500','q_700','tp']
+  ens_count: 10
+  nwp_subfolder: "processed_data_10ens"

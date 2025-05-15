@@ -1,0 +1,29 @@
+model_args:
+  model_name: "climatology"
+  input_vars: {
+    "pressure_levels": [
+               't_850','z_500', 'q_700'
+               ],
+    "single_level": [
+               't2m','tprate',
+               ],
+  }
+  input_cons: ['lsm', 'slt', 'z']
+  output_vars: ['t2m','t_850','z_500','q_700','tp']
+
+data_args:
+  data_dir: "/root/Weather_Data/flood_season_data"
+  nwp_subfolder: "test_ens"
+  crop_size: [180, 360]
+  batch_size: 64
+  num_workers: 0
+  input_vars: {
+    "pressure_levels": [
+               't_850','z_500', 'q_700'
+               ],
+    "single_level": [
+               't2m','tprate',
+               ],
+  }
+  input_cons: ['lsm', 'slt', 'z']
+  output_vars: ['t2m','t_850','z_500','q_700','tp']

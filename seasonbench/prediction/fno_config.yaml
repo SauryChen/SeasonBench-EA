@@ -1,0 +1,36 @@
+model_args:
+  model_name: "fno"
+  input_vars: ['t2m','msl','tp',
+               't_1000','t_850','t_700','t_500','t_200',
+               'z_1000','z_850','z_700','z_500','z_200',
+               'u_1000','u_850','u_700','u_500','u_200',
+               'v_1000','v_850','v_700','v_500','v_200',
+               'q_1000','q_850','q_700','q_500','q_200',
+               'stl1','blh','asn','sd','ssrd',]
+  input_cons: ['lsm', 'slt', 'z']
+  output_vars: ['t2m','msl','tp',
+               't_1000','t_850','t_700','t_500','t_200',
+               'z_1000','z_850','z_700','z_500','z_200',
+               'u_1000','u_850','u_700','u_500','u_200',
+               'v_1000','v_850','v_700','v_500','v_200',
+               'q_1000','q_850','q_700','q_500','q_200',
+               'stl1','blh','asn','sd','ssrd',]
+  ##########
+  modes1: 16 # as the example in https://github.com/neuraloperator/neuraloperator
+  modes2: 16
+  width: [64, 128, 256, 512, 1024]
+  initial_step: 1
+  #########
+  learning_rate: 1e-3
+  num_workers: 12
+  t_max: 500
+  patience: 20
+  max_epochs: 300
+
+data_args:
+  data_dir: "/root/Weather_Data/flood_season_data/ERA5_monthly_mean/china_025deg/processed_data"
+  dataset_name: "china_025deg"
+  lead_step: 1
+  pred_step: 1
+  crop_size: [200, 400]
+  batch_size: 16
