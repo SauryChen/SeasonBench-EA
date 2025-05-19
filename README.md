@@ -52,7 +52,7 @@ Numerical model ensembles are provided by the Copernicus Climate Change Service 
 
 [Seasonal forecast monthly statistics on pressure levels](https://cds.climate.copernicus.eu/datasets/seasonal-monthly-pressure-levels?tab=overview)
 
-| Center                                    | CMCC [374GB]                       | DWD [325GB]                      | ECCC <br /> [95GB]   | ECMWF [306GB]                     | Meteo-France [251GB]             |
+| Center                                    | CMCC [374GB]                       | DWD [325GB]                      | ECCC [95GB]   | ECMWF [306GB]                     | Meteo-France [251GB]             |
 | ----------------------------------------- | ---------------------------------- | -------------------------------- | ------------- | --------------------------------- | -------------------------------- |
 | System                                    | SPS 3.5                            | GCFS2.1                          | GEM5-NEMO     | SEAS5                             | System 8                         |
 | Ensemble Members<br />hindcast / forecast | 40(1993-2016) <br />50 (2021-2024) | 30(1993-2019)<br />50(2021-2024) | 10(1993-2024) | 25(1981-2016) <br />51(2017-2024) | 25(1993-2019)<br />51(2022-2024) |
