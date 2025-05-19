@@ -118,7 +118,7 @@ After downloading, please organize the data as follows:
     python cal_precp_quantile.py
     ```
 
-+ **Training** the model with `train.py`.
++ **Train** the model with `train.py`.
 
   + ```python
     python train.py --item prediction --config seasonbench/prediction/fno_config.yaml
@@ -149,10 +149,8 @@ After downloading, please organize the data as follows:
                               --vars t2m t_850 z_500 q_700 tp
     ```
 
-  + Example output (*will be similar to*): 
-
+  + Example output (*will be similar to*):
     ![t2m_2021-01](/example_figs/t2m_2021-01.png)
-
     *2021-01* is the start month; step 1 to 6 correspond to forecasts from 2021-02 to 2021-07.
 
 + **Visualize** the metrics with scripts in `visualization` folder.
@@ -168,9 +166,8 @@ After downloading, please organize the data as follows:
     ```
 
   + Example output (*will be similar to*): 
-
+    ![rmse](/example_figs/rmse.png)
     ![es_1](/example_figs/es_1.png)
-
     Each metric will generate .png plots with selected variables and models.
 
 ### For correction
@@ -190,7 +187,7 @@ After downloading, please organize the data as follows:
     python process_nwp_all.py --center_name cmcc
     ```
 
-+ **Training**, **evaluation** and **visualize** are similar to steps in prediction, with files in `correction` folder.
++ **Train**, **evaluation** and **visualization** are similar to steps in prediction, with files in `correction` folder.
 
   + ```python
     # train (for graphcast, set torch.set_float32_matmul_precision('high'))
@@ -211,17 +208,13 @@ After downloading, please organize the data as follows:
     ```
 
   + Example outputs (*will be similar to*):
-
     ![tp_2014-01](/example_figs/tp_2014-01.png)
-
     Step 1 ~ Step 6 refers to the 2014-01 ~ 2014-06.
 
   + Example outputs (*will be similar to*):
-
+    ![acc](/example_figs/acc.png)
     ![es_6](/example_figs/es_6.png)
-
     ![hist_rank_6](/example_figs/hist_rank_6.png)
-
     Each metric will generate .png plots with selected variables and models.
 
 ## 📢 Reference & Statement
