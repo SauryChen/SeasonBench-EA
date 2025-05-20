@@ -55,7 +55,7 @@ Numerical model ensembles are provided by the Copernicus Climate Change Service 
 | Center                                    | CMCC [374GB]                       | DWD [325GB]                      | ECCC [95GB]   | ECMWF [306GB]                     | Meteo-France [251GB]             |
 | ----------------------------------------- | ---------------------------------- | -------------------------------- | ------------- | --------------------------------- | -------------------------------- |
 | System                                    | SPS 3.5                            | GCFS2.1                          | GEM5-NEMO     | SEAS5                             | System 8                         |
-| Ensemble Members<br />hindcast / forecast | 40(1993-2016) <br />50 (2021-2024) | 30(1993-2019)<br />50(2021-2024) | 10(1993-2024) | 25(1981-2016) <br />51(2017-2024) | 25(1993-2018)<br />51(2022-2024) |
+| Ensemble Members<br />hindcast / forecast | 40(1993-2016) <br />50 (2021-2024) | 30(1993-2019)<br />50(2021-2024) | 10(1990-2020)<br />10(2021-2024) | 25(1981-2016) <br />51(2017-2024) | 25(1993-2018)<br />51(2022-2024) |
 | Missing Years                             | 2017-2020                          | 2020                             |               |                                   | 2019-2021                        |
 
 These forecasts are provided at **monthly resolution** and **1.0° global coverage**, spanning **1993–2024**. Some years may be missing for specific models due to inconsistencies or changes in system versions; only uniform system periods are included to ensure comparability across models.
