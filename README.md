@@ -80,6 +80,10 @@ Climatology, Persistence, NWP prediction
 
 ## 🔧 How to use
 
+### Environment
+
+Using requirements.txt to prepare for the environment.
+
 ### Data preparation
 
 If you only wish to reproduce the baselines used in our paper (i.e., monthly reanalysis + CMCC), a subset can be downloaded from: [🔗 SeasonBench-EA (subset)](https://doi.org/10.7910/DVN/EPEUGO)
