@@ -78,6 +78,70 @@ Climatology, Persistence, NWP prediction
 
 2m temperature, total precipitation, temperature at 850 hPa, geopotential at 500 hPa, specific humidity at 700 hPa
 
+## 📈 Leaderboard
+
+For each variable and lead time, we highlight the **best and the second-best** performing models among these approaches.
+
+### Prediction
+
+Regarding RMSE, because all the models outperform the persistence baseline and underperform the climatology baseline, we report the results among the data-driven models.
+
+| Variable [RMSE $\downarrow$] | Lead time 1                  | Lead time 2                  | Lead time 3                  | Lead time 4                  | Lead time 5                  | Lead time 6                  |
+| ---------------------------- | ---------------------------- | ---------------------------- | ---------------------------- | ---------------------------- | ---------------------------- | ---------------------------- |
+| tp [mm/day]                  | 2.00 (ViT) / 2.03 (Unet)     | 2.00 (ViT) / 2.14 (Unet)     | 2.15 (ViT) / 2.25 (Unet)     | 2.25 (ViT) / 2.36 (Unet)     | 2.32 (ViT) / 2.45 (Unet)     | 2.37 (ViT) / 2.48 (Unet)     |
+| t2m [K]                      | 2.28 (Unet) / 2.32 (ViT)     | 2.74 (Unet) / 3.08 (ViT)     | 3.16 (Unet) / 4.06 (ViT)     | 3.52 (Unet) / 5.22 (ViT)     | 3.76 (Unet) / 5.70 (FNO)     | 3.89 (Unet) / 5.84 (FNO)     |
+| t_850 [K]                    | 1.95 (Unet) / 1.95 (ViT)     | 2.24 (Unet) / 2.67 (ViT)     | 2.52 (Unet) / 3.63 (ViT)     | 2.80 (Unet) / 4.61 (FNO)     | 3.02 (Unet) / 5.09 (FNO)     | 3.17 (Unet) / 5.20 (FNO)     |
+| z_500 [m²/s²]                | 362.20 (ViT) / 363.46 (Unet) | 392.71 (Unet) / 476.74 (FNO) | 431.39 (Unet) / 592.03 (FNO) | 476.75 (Unet) / 711.96 (FNO) | 505.98 (Unet) / 802.12 (FNO) | 516.84 (Unet) / 842.05 (FNO) |
+| q_700 [g/kg]                 | 0.67 (ViT) / 0.71 (Unet)     | 0.75 (ViT) / 0.79 (Unet)     | 0.87 (ViT) / 0.89 (Unet)     | 0.99 (Unet) / 1.05 (ViT)     | 1.05 (Unet) / 1.19 (ViT)     | 1.06 (Unet) / 1.26 (ViT)     |
+
+For ACC, since climatology always yields an ACC of zero, we include the persistence baseline in the comparison.
+
+| Variable [ACC $\uparrow$] | Lead time 1                | Lead time 2                | Lead time 3                 | Lead time 4                   | Lead time 5                   | Lead time 6                |
+| ------------------------- | -------------------------- | -------------------------- | --------------------------- | ----------------------------- | ----------------------------- | -------------------------- |
+| tp                        | 0.17 (ViT) / 0.13 (Persis) | 0.12 (ViT) / 0.12 (Persis) | 0.11 (ViT) / 0.09 (Persis)  | 0.09 (ViT) / 0.06 (Persis)    | 0.07 (ViT) / 0.04 (VAE)       | 0.05 (ViT) / 0.03 (VAE)    |
+| t2m                       | 0.21 (VAE) / 0.12 (Unet)   | 0.12 (VAE) / 0.00 (Unet)   | 0.07 (VAE) / -0.03 (Unet)   | 0.04 (VAE) / -0.04 (Unet)     | 0.04 (VAE) / -0.01 (Unet)     | 0.05 (VAE) / 0.02 (Unet)   |
+| t_850                     | 0.18 (VAE) / 0.14 (Unet)   | 0.07 (VAE) / 0.00 (Unet)   | 0.02 (VAE) / -0.02 (Unet)   | 0.00 (VAE) / -0.04 (Unet)     | -0.01 (VAE) / -0.02 (Unet)    | 0.01 (VAE) / 0.00 (Unet)   |
+| z_500                     | 0.18 (VAE) / 0.10 (FNO)    | 0.15 (VAE) / -0.03 (Unet)  | 0.09 (VAE) / -0.05 (Unet)   | 0.06 (VAE) / -0.08 (Unet)     | 0.05 (VAE) / -0.07 (Unet)     | 0.05 (VAE) / -0.03 (Unet)  |
+| q_700                     | 0.25 (ViT) / 0.16 (Unet)   | 0.11 (ViT) / 0.03 (Unet)   | 0.00 (ViT) / -0.01 (Persis) | -0.06 (Unet) / -0.06 (Persis) | -0.07 (Persis) / -0.07 (Unet) | -0.05 (Unet) / -0.08 (VAE) |
+
+Regarding bias, we report the absolute bias and include both persistence and climatology as reference points for a more comprehensive comparison.
+
+| Variable [bias $\rightarrow$ 0] | Lead time 1                    | Lead time 2                    | Lead time 3                     | Lead time 4                     | Lead time 5                     | Lead time 6                     |
+| ------------------------------- | ------------------------------ | ------------------------------ | ------------------------------- | ------------------------------- | ------------------------------- | ------------------------------- |
+| tp [mm/day]                     | 0.01 (FNO) / 0.04 (Clim)       | 0.05 (Clim) / 0.13 (Persis)    | 0.06 (Clim) / 0.08 (ViT)        | 0.07 (Clim) / 0.08 (ViT)        | 0.08 (Clim) / 0.22 (ViT)        | 0.09 (Clim) / 0.30 (Persis)     |
+| t2m [K]                         | 0.31 (Persis) / 0.38 (Unet)    | 0.59 (Clim) / 0.68 (Persis)    | 0.58 (Clim) / 0.96 (Unet)       | 0.57 (Clim) / 1.03 (Unet)       | 0.58 (Clim) / 0.99 (Unet)       | 0.60 (Clim) / 0.85 (Unet)       |
+| t_850 [K]                       | 0.28 (Persis) / 0.28 (Unet)    | 0.47 (Clim) / 0.60 (Persis)    | 0.46 (Clim) / 0.81 (Unet)       | 0.45 (Clim) / 0.87 (Unet)       | 0.47 (Clim) / 0.86 (Unet)       | 0.48 (Clim) / 0.76 (Unet)       |
+| z_500 [m²/s²]                   | 31.89 (Persis) / 109.68 (Unet) | 73.11 (Persis) / 135.50 (Clim) | 111.04 (Persis) / 132.71 (Clim) | 132.65 (Clim) / 139.60 (Persis) | 132.96 (Clim) / 148.76 (Persis) | 134.58 (Clim) / 137.06 (Persis) |
+| q_700 [g/kg]                    | 0.04 (ViT) / 0.06 (Unet)       | 0.16 (Unet) / 0.17 (Clim)      | 0.18 (Clim) / 0.26 (Persis)     | 0.19 (Clim) / 0.30 (VAE)        | 0.20 (Clim) / 0.27 (VAE)        | 0.20 (Clim) / 0.23 (VAE)        |
+
+### Correction
+
+| Variable [RMSE $\downarrow$] | Lead time 1                | Lead time 2                 | Lead time 3                 | Lead time 4                  | Lead time 5                 | Lead time 6                 |
+| ---------------------------- | -------------------------- | --------------------------- | --------------------------- | ---------------------------- | --------------------------- | --------------------------- |
+| **tp [mm/day]**              | 1.69 (GC) / 1.69 (Clim)    | 1.74 (Clim) / 1.80 (GC)     | 1.77 (Clim) / 1.85 (ViT)    | 1.80 (Clim) / 1.86 (GC)      | 1.81 (Clim) / 1.87 (GC)     | 1.81 (Clim) / 1.88 (GC)     |
+| **t2m [K]**                  | 1.40 (Clim) / 1.52 (GC)    | 1.39 (Clim) / 1.64 (GC)     | 1.39 (Clim) / 1.64 (GC)     | 1.39 (Clim) / 1.68 (GC)      | 1.41 (Clim) / 1.73 (GC)     | 1.44 (Clim) / 1.71 (GC)     |
+| **t_850 [K]**                | 1.35 (GC) / 1.39 (Clim)    | 1.39 (Clim) / 1.49 (GC)     | 1.39 (Clim) / 1.50 (GC)     | 1.41 (Clim) / 1.52 (ViT)     | 1.42 (Clim) / 1.61 (GC)     | 1.44 (Clim) / 1.58 (GC)     |
+| **z_500 [m²/s²]**            | 260.36 (GC) / 260.76 (ViT) | 290.75 (Clim) / 295.30 (GC) | 291.10 (Clim) / 298.57 (GC) | 293.33 (Clim) / 300.93 (ViT) | 292.41 (Clim) / 301.68 (GC) | 295.35 (Clim) / 307.79 (GC) |
+| **q_700 [g/kg]**             | 0.51 (GC) / 0.52 (ViT)     | 0.56 (Clim) / 0.57 (GC)     | 0.56 (Clim) / 0.58 (GC)     | 0.57 (Clim) / 0.60 (GC)      | 0.57 (Clim) / 0.61 (GC)     | 0.57 (Clim) / 0.60 (GC)     |
+
+| Variable [ACC $\uparrow$] | Lead time 1             | Lead time 2             | Lead time 3              | Lead time 4              | Lead time 5               | Lead time 6              |
+| ------------------------- | ----------------------- | ----------------------- | ------------------------ | ------------------------ | ------------------------- | ------------------------ |
+| **tp**                    | 0.26 (ENS) / 0.25 (GC)  | 0.14 (GC) / 0.13 (ViT)  | 0.10 (ViT) / 0.10 (GC)   | 0.11 (GC) / 0.10 (ViT)   | 0.10 (GC) / 0.08 (Unet)   | 0.10 (GC) / 0.07 (SFNO)  |
+| **t2m**                   | 0.33 (GC) / 0.28 (SFNO) | 0.12 (SFNO) / 0.10 (GC) | 0.10 (ViT) / 0.09 (SFNO) | 0.14 (SFNO) / 0.05 (VAE) | 0.05 (ViT) / 0.03 (GC)    | 0.09 (GC) / 0.06 (SFNO)  |
+| **t_850**                 | 0.34 (GC) / 0.32 (ViT)  | 0.12 (GC) / 0.10 (ViT)  | 0.15 (ViT) / 0.12 (SFNO) | 0.13 (ViT) / 0.13 (SFNO) | 0.08 (SFNO) / 0.07 (ViT)  | 0.10 (ViT) / 0.10 (SFNO) |
+| **z_500**                 | 0.45 (ENS) / 0.40 (ViT) | 0.17 (ENS) / 0.17 (ViT) | 0.16 (ViT) / 0.15 (VAE)  | 0.18 (ViT) / 0.18 (SFNO) | 0.16 (SFNO) / 0.12 (VAE)  | 0.15 (SFNO) / 0.14 (VAE) |
+| **q_700**                 | 0.38 (GC) / 0.36 (Unet) | 0.20 (GC) / 0.19 (ViT)  | 0.17 (GC) / 0.15 (ViT)   | 0.13 (GC) / 0.12 (VAE)   | 0.10 (Unet) / 0.09 (SFNO) | 0.11 (Unet) / 0.11 (GC)  |
+
+For CRPS, we omit climatology in the comparison.
+
+| Variable [CRPS $\downarrow$] | Lead time 1                | Lead time 2                 | Lead time 3                | Lead time 4                | Lead time 5                 | Lead time 6                |
+| ---------------------------- | -------------------------- | --------------------------- | -------------------------- | -------------------------- | --------------------------- | -------------------------- |
+| **tp [mm/day]**              | 0.90 (ViT) / 0.91 (GC)     | 0.99 (ViT) / 1.00 (GC)      | 1.02 (ENS) / 1.03 (ViT)    | 1.04 (ENS) / 1.04 (GC)     | 1.04 (ENS) / 1.06 (GC)      | 1.03 (ENS) / 1.03 (GC)     |
+| **t2m [K]**                  | 0.84 (GC) / 0.91 (SFNO)    | 0.92 (GC) / 1.03 (SFNO)     | 0.92 (GC) / 1.04 (SFNO)    | 0.94 (GC) / 1.06 (SFNO)    | 0.98 (GC) / 1.07 (SFNO)     | 0.96 (GC) / 1.06 (SFNO)    |
+| **t_850 [K]**                | 0.78 (GC) / 0.83 (SFNO)    | 0.87 (GC) / 0.93 (ViT)      | 0.89 (GC) / 0.90 (ViT)     | 0.88 (ViT) / 0.93 (GC)     | 0.95 (GC) / 0.97 (ViT)      | 0.92 (GC) / 0.95 (ViT)     |
+| **z_500 [m²/s²]**            | 140.32 (GC) / 145.27 (ViT) | 168.83 (GC) / 185.89 (SFNO) | 172.05 (GC) / 177.47 (ViT) | 172.68 (ViT) / 175.49 (GC) | 170.78 (GC) / 181.98 (SFNO) | 173.61 (GC) / 182.97 (ViT) |
+| **q_700 [g/kg]**             | 0.30 (GC) / 0.30 (ViT)     | 0.33 (ViT) / 0.34 (GC)      | 0.34 (GC) / 0.35 (ViT)     | 0.35 (GC) / 0.36 (Unet)    | 0.35 (Unet) / 0.36 (GC)     | 0.35 (GC) / 0.36 (Unet)    |
+
 ## 🔧 How to use
 
 ### Environment
