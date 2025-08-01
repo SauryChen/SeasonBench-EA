@@ -156,6 +156,10 @@ To access the full dataset, you can download it from:
 
  [🔗 Baidu netdisk](https://pan.baidu.com/s/1p78We3pCwU-eF3Xp-I0-Uw) (access code: xgq9)
 
+If you encounter difficulties accessing Baidu Netdisk, you can alternatively download the data from [Hugging Face Datasets](https://huggingface.co/SauryChen/datasets), the datasets are prefixed with SeasonBench-EA. Checkpoints for baseline models are available at [Hugging Face Models](https://huggingface.co/datasets/SauryChen/SeasonBench-EA).
+
+We also provide scripts for downloading ERA5 and NWP data as needed, which can be found in the [Hugging Face Download Scripts](https://huggingface.co/datasets/SauryChen/SeasonBench-EA).
+
 After downloading, please organize the data as follows:
 
 ```
