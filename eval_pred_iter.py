@@ -202,16 +202,24 @@ def main(args):
     climatology_path = Path(data_args['data_dir']) / 'climatology.npz'
     climatology_data = np.load(climatology_path)
     # load threshold
-    tp_threshold_path = Path(data_args['data_dir']) / 'tp_quantiles.npz'
+    tp_threshold_path = Path(data_args['data_dir']) / 'tp_monthly_quantiles.npz'
     tp_threshold = np.load(tp_threshold_path)
-    tp_threshold = np.stack([tp_threshold['q50'], tp_threshold['q75'], tp_threshold['q90'], tp_threshold['q95'], tp_threshold['q99']], axis=0) # [5, H, W]
+    tp_threshold_monthly = {
+        m: np.stack([
+            tp_threshold[f'month_{m:02d}_q50'],
+            tp_threshold[f'month_{m:02d}_q75'],
+            tp_threshold[f'month_{m:02d}_q90'],
+            tp_threshold[f'month_{m:02d}_q95'],
+            tp_threshold[f'month_{m:02d}_q99']
+        ], axis=0) # [5, H, W]
+        for m in range(1, 13)
+    }
 
     # initialize criterion
     RMSE = criterion.RMSE()
     Bias = criterion.Bias()
     ES = criterion.Energy_Spectral()
     ACC = criterion.ACC(climatology=climatology_data, is_weight=False, crop_size=data_args['crop_size'])
-    CSI = criterion.CSI(thresholds=tp_threshold, crop_size=data_args['crop_size'])
 
     # Evaluation
     metrics = {
@@ -250,6 +258,7 @@ def main(args):
                             es = ES(clim_value).cpu().numpy()
                             es_gt = ES(target).cpu().numpy()
                             if var == 'tp':
+                                CSI = criterion.CSI(thresholds=tp_threshold_monthly[clim_month+1], crop_size=data_args['crop_size'])
                                 csi = CSI(clim_value, target).cpu().numpy()
                             metrics['rmse'][var][step].append(rmse)
                             metrics['bias'][var][step].append(bias)
@@ -348,7 +357,13 @@ def main(args):
                         acc = ACC(denorm_preds[:, i], target[:, i], timestamps_for_this_step, var).cpu().numpy()
                         es = ES(denorm_preds[:, i]).cpu().numpy()
                         if var == 'tp':
-                            csi = CSI(denorm_preds[:, i], target[:, i]).cpu().numpy()
+                            csi_results = []
+                            for ts_batch in range(len(timestamps_for_this_step)):
+                                clim_month = int(timestamps_for_this_step[ts_batch][5:7])
+                                CSI = criterion.CSI(thresholds=tp_threshold_monthly[clim_month], crop_size=data_args['crop_size'])
+                                csi_result = CSI(denorm_preds[ts_batch:ts_batch+1, i], target[ts_batch:ts_batch+1, i]).cpu().numpy()
+                                csi_results.append(csi_result)
+                            csi = np.mean(csi_results, axis=0)
 
                         metrics['rmse'][var][step].extend([rmse])
                         metrics['bias'][var][step].extend([bias])
