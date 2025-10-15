@@ -16,42 +16,68 @@ save_path.mkdir(parents=True, exist_ok=True)
 
 ds = xr.open_dataset(china_025 / tp_file)
 # ds = xr.open_dataset(global_1 / tp_file)
-tp = ds['tp'].values
+tp = ds['tp']
 
-def calculate_quantiles(data, quantiles):
+# for each month
+months = np.arange(1, 13)
+quantiles = [0.5, 0.75, 0.9, 0.95, 0.99]
+
+def calculate_quantiles(data, months, quantiles):
     """
         data: [T, H, W]
         quantiles: [0.5, 0.75, 0.9, 0.95, 0.99]
     """
-    quantile_values = {}
-    for q in quantiles:
-        quantile_values[f"q{int(q*100)}"] = np.quantile(data, q, axis=0)  # (H, W)
-    return quantile_values
-
-quantiles = [0.5, 0.75, 0.9, 0.95, 0.99]
-quantile_values = calculate_quantiles(tp, quantiles)
-
-np.savez(save_path / 'tp_quantiles.npz', **quantile_values)
-print(f"Quantiles saved to {save_path / 'tp_quantiles.npz'}")
+    monthly_quantiles = {}
+    for m in months:
+        tp_month = data.sel(valid_time = data['valid_time.month'] == m)
+        q_values = np.quantile(tp_month, quantiles, axis=0)  # (len(quantiles), H, W)
+        for i, q in enumerate(quantiles):
+            monthly_quantiles[f'month_{m:02d}_q{int(q*100)}'] = q_values[i]
+    return monthly_quantiles
 
 
-def plot_quantiles(quantile_values):
-    n_quantiles = len(quantile_values)
-    fig, axes = plt.subplots(1, n_quantiles, figsize=(4 * n_quantiles, 4), constrained_layout=True)
+quantile_values = calculate_quantiles(tp, months, quantiles)
 
-    if n_quantiles == 1:
-        axes = [axes]
+np.savez(save_path / 'tp_monthly_quantiles.npz', **quantile_values)
+print(f"Quantiles saved to {save_path / 'tp_monthly_quantiles.npz'}")
 
-    vmax = max(qv.max() for qv in quantile_values.values()) * 1000 # [m] -> [mm]
-    vmin = 0
 
-    for ax, (q_name, q_value) in zip(axes, quantile_values.items()):
-        img = ax.imshow(q_value * 1000, cmap='viridis', vmin=vmin, vmax=vmax) # [m] -> [mm]
-        ax.set_title(f'{q_name}', fontsize=10)
-        ax.axis('off')
 
-    cbar = fig.colorbar(img, ax=axes, orientation='vertical', fraction=0.02, pad=0.04)
-    cbar.set_label('Precipitation (mm/day)', fontsize=10)
-    plt.savefig('tp_quantiles_china025monthly.png', dpi=300)
+def plot_monthly_quantiles(quantile_values, save_dir):
+    """
+    quantile_values: dict, keys like 'month_01_q90'
+    save_dir: output directory for figures
+    """
+    save_dir = Path(save_dir)
+    save_dir.mkdir(parents=True, exist_ok=True)
 
-plot_quantiles(quantile_values)
+    months = sorted({int(k.split('_')[1]) for k in quantile_values.keys()})
+    quantiles = sorted({k.split('_')[-1] for k in quantile_values.keys()})
+    print(f"Detected {len(months)} months, quantiles: {quantiles}")
+
+    for m in months:
+        monthly_data = {k: v for k, v in quantile_values.items() if f"month_{m:02d}_" in k}
+        n_quantiles = len(monthly_data)
+        fig, axes = plt.subplots(1, n_quantiles, figsize=(4 * n_quantiles, 4), constrained_layout=True)
+
+        assert n_quantiles == len(quantiles), "Mismatch in number of quantiles"
+
+        vmax = max(qv.max() for qv in monthly_data.values()) * 1000  # [m] -> [mm]
+        vmin = 0
+
+        for ax, (q_name, q_value) in zip(axes, monthly_data.items()):
+            img = ax.imshow(q_value * 1000, cmap='viridis', vmin=vmin, vmax=vmax)
+            ax.set_title(f'{q_name}', fontsize=10)
+            ax.axis('off')
+
+        cbar = fig.colorbar(img, ax=axes, orientation='vertical', fraction=0.02, pad=0.04)
+        cbar.set_label('Precipitation (mm/month)', fontsize=10)
+
+        fig.suptitle(f'Month {m:02d} Quantiles of Precipitation', fontsize=12)
+        save_path = save_dir / f'tp_quantiles_month_{m:02d}.png'
+        plt.savefig(save_path, dpi=300, bbox_inches='tight')
+        plt.close(fig)
+        print(f"Saved {save_path}")
+
+# Example usage
+plot_monthly_quantiles(quantile_values, save_dir='tp_monthly_quantile_figs')
