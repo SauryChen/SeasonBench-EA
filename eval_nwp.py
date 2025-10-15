@@ -1,7 +1,7 @@
 """
     evaluate all the ensemble members for a given nwp model (center name) with ERA5 1 deg data.
     All the evaluation are made within the EA region lat = [60, 8], lon = [58, 163]
-    Ensemble Mean for RMSE, bias, acc, es and csi. Independent members for 
+    Ensemble Mean for RMSE, bias, acc and es. Independent members for others
 """
 import os
 import yaml
@@ -34,7 +34,6 @@ def save_metrics(args, final_metrics, log_dir):
                 'bias': {'z_500': [step1, step2, ...], 'tp': [...]},
                 'acc': {'z_500': [step1, step2, ...], 'tp': [...]},
                 'es': {'z_500': [step1, step2, ...], 'tp': [...]},
-                'csi': {'tp': [step1, step2, ...]}
             }
         N_STEPS
     """
@@ -46,8 +45,6 @@ def save_metrics(args, final_metrics, log_dir):
         save_dict[f'acc_{var}'] = np.array(final_metrics['acc'][var], dtype=np.float32)
         save_dict[f'es_{var}'] = np.array(final_metrics['es'][var], dtype=np.float32)
         save_dict[f'es_gt_{var}'] = np.array(final_metrics['es_gt'][var], dtype=np.float32)
-        if var == 'tp':
-            save_dict[f'csi_{var}'] = np.array(final_metrics['csi'][var], dtype=np.float32)
         
         save_dict[f'rank_hist_{var}'] = np.stack(final_metrics['rank_hist'][var], axis=0) # [N_STEPS, N_bins]
         save_dict[f'crps_{var}'] = np.array(final_metrics['crps'][var], dtype=np.float32)
@@ -222,9 +219,6 @@ def main(args):
 
     climatology_path = Path(data_args['data_dir']) / 'ERA5_monthly_mean/global_1deg/processed_data' / 'climatology.npz'
     climatology_data = np.load(climatology_path)
-    tp_threshold_path = Path(data_args['data_dir']) / 'ERA5_monthly_mean/global_1deg/processed_data' / 'tp_quantiles.npz'
-    tp_threshold = np.load(tp_threshold_path)
-    tp_threshold = np.stack([tp_threshold['q50'], tp_threshold['q75'], tp_threshold['q90'], tp_threshold['q95'], tp_threshold['q99']], axis=0) # [5, H, W]
 
     # inital criterion
     RMSE = criterion.RMSE()
@@ -232,7 +226,6 @@ def main(args):
     WI = criterion.Willmott_Index()
     ES = criterion.Energy_Spectral()
     ACC = criterion.ACC(climatology=climatology_data, is_weight=False, crop_size=data_args['crop_size'], lat_idx=lat_idx, lon_idx=lon_idx)
-    CSI = criterion.CSI(thresholds=tp_threshold, crop_size=data_args['crop_size'], lat_idx=lat_idx, lon_idx=lon_idx)
     Rank_Hist = criterion.Rank_Histogram()
     CRPS = criterion.CRPS()
     SSR = criterion.Spread_Skill_Ratio()
@@ -245,7 +238,6 @@ def main(args):
         'acc': {var:[[] for _ in range(N_STEPS)] for var in data_args['output_vars']},
         'es': {var:[[] for _ in range(N_STEPS)] for var in data_args['output_vars']},
         'es_gt': {var:[[] for _ in range(N_STEPS)] for var in data_args['output_vars']},
-        'csi': {var:[[] for _ in range(N_STEPS)] for var in ['tp']}, # only for tp
         'rank_hist': {var:[[] for _ in range(N_STEPS)] for var in data_args['output_vars']},
         'crps': {var:[[] for _ in range(N_STEPS)] for var in data_args['output_vars']},
         'ssr': {var:[[] for _ in range(N_STEPS)] for var in data_args['output_vars']},
@@ -396,8 +388,6 @@ def main(args):
                 metrics['acc'][var][t].append(ACC(p_mean, gt_mean, [valid_time], var))
                 metrics['es'][var][t].append(ES(p_mean))
                 metrics['es_gt'][var][t].append(ES(gt_mean))
-                if var == 'tp':
-                    metrics['csi'][var][t].append(CSI(p_mean, gt_mean))
                 
                 metrics['rank_hist'][var][t].append(Rank_Hist(p, gt_mean))
                 metrics['crps'][var][t].append(CRPS(p, gt_mean))
@@ -410,7 +400,6 @@ def main(args):
         'acc': {var: [np.mean(metrics['acc'][var][t]) for t in range(N_STEPS)] for var in data_args['output_vars']},
         'es': {var: [np.mean(np.concatenate(metrics['es'][var][t], axis=0), axis=0) for t in range(N_STEPS)] for var in data_args['output_vars']},
         'es_gt': {var: [np.mean(np.concatenate(metrics['es_gt'][var][t], axis=0), axis=0) for t in range(N_STEPS)] for var in data_args['output_vars']},
-        'csi':{var: [np.mean(np.stack(metrics['csi'][var][t], axis=0), axis=0) for t in range(N_STEPS)] for var in ['tp']},
         'rank_hist': {var: [np.sum(metrics['rank_hist'][var][t], axis=0) for t in range(N_STEPS)] for var in data_args['output_vars']},
         'crps': {var: [np.mean(metrics['crps'][var][t]) for t in range(N_STEPS)] for var in data_args['output_vars']},
         'ssr': {var: [np.mean(metrics['ssr'][var][t]) for t in range(N_STEPS)] for var in data_args['output_vars']},
